@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+    <color name="colorPrimary">#701010</color> <!-- Button areas -->
+    <color name="colorPrimaryDark">#701010</color> <!-- Title Bar -->
+    <color name="colorSecondary">#008811</color>
+    <color name="colorAccent">#008811</color>
+    <color name="colorButtonText">#117711</color>
+    <color name="colorDialogButtonText">#008811</color>
+    <color name="colorShutterButtonText">#008811</color>
+    <color name="colorShutterButtonActive">#008811</color>
+
+    <color name="full_screen_background">#000000</color>
+    <color name="full_screen_dir_divider">#FFFFFF</color>
+    <color name="full_screen_dir_names">#ffffffff</color>
 </resources>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btnCamera"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:onClick="onBtnCameraClick"
+        android:text="@string/button_take_photo"
+        android:textColor="@color/colorButtonText"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvDirs" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvDirs"
+        android:scrollbars="vertical"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/glButtonDirView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnTreeUp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glImViewDirView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/glButtonDirView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.90" />
+
+    <Button
+        android:id="@+id/btnTreeUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onBtnUpClick"
+        android:text="@string/button_change_to_parent_dir"
+        android:textColor="@color/colorButtonText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glImViewDirView" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/swScrollOrientation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/rvDirs"
+        app:layout_constraintEnd_toStartOf="@+id/btnNewDir"
+        app:layout_constraintStart_toEndOf="@+id/btnTreeUp"
+        app:layout_constraintTop_toBottomOf="@+id/glImViewDirView" />
+
+    <Button
+        android:id="@+id/btnNewDir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onBtnNewDirClick"
+        android:text="@string/button_new_dir"
+        android:textColor="@color/colorButtonText"
+        app:layout_constraintEnd_toStartOf="@id/btnRefreshFileTree"
+        app:layout_constraintStart_toEndOf="@id/swScrollOrientation"
+        app:layout_constraintTop_toTopOf="@+id/glImViewDirView" />
+
+    <Button
+        android:id="@+id/btnRefreshFileTree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onBtnRefreshClick"
+        android:text="@string/button_refresh"
+        android:textColor="@color/colorButtonText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/glImViewDirView" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPhotos"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/glImViewDirView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>

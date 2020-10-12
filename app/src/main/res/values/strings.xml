@@ -1,3 +1,96 @@
 <resources>
-    <string name="app_name">ExampleAppName</string>
+    <string name="app_name">TOAV Photos</string>
+    <string name="initial_directory">/storage/emulated/0/TOAVPhotos</string>
+
+    <!-- Changing some of these requires changes in the source code -->
+    <string name="directory_number_suffix_format">-toavp%03d</string>
+    <string name="directory_number_suffix_regex">.*-toavp[0-9]{3}$</string>
+    <string name="temp_dirname_being_moved_prefix">__beingMoved-</string>
+    <string name="photo_file_extension_accept">.jpg</string>
+    <string name="photo_file_extension_toavp">-toavp.jpg</string>
+    <string name="photo_file_number_prefix_format">%03d</string>
+    <string name="photo_file_number_prefix_separator">-</string>
+    <string name="date_format_in_filename">yyyy.MM.dd_HH.mm.ss</string>
+    <string name="photo_file_no_time">_timeNotReadable_</string>
+    <!-- -->
+
+    <!-- Changing these requires changes in the source code -->
+    <string name="photo_view_timeText_format">%02d.%02d.%04d %02d:%02d:%02d</string>
+    <string name="photoView_infoText_format_valid">%03d - %s</string>
+    <string name="photoView_infoText_format_invalid">%03d - \"%s\"</string>
+    <!-- -->
+
+    <!-- Error messages -->
+    <string name="error_default">Sorry, an unknown Runtime error occurred.</string>
+
+    <string name="error_IO_createPhotoFile">Sorry, IO-error occurred when creating the file for the photo.</string>
+    <!--string name="error_access_denied">Sorry, write access to file denied.</string-->
+    <string name="warning_file_already_existed">Weird, the file for the photo already existed.</string>
+
+    <string name="exception_getting_cam_provider">Sorry, failed to get the camera provider.</string>
+    <string name="error_using_camera">Sorry, failed to use the camera.</string>
+    <string name="error_taking_photo">Sorry, failed to take or save the photo.</string>
+    <string name="error_taking_photo_and_deleting">Sorry, failed to take or save the photo. Additionally, the prepared file could not be deleted.</string>
+    <string name="error_no_camera_app">Sorry, it appears there is no camera app installed for taking pictures. On Android 5.0 (Lollipop / API level 21) and higher, this app could do it.</string>
+    <string name="error_photo_activity">Sorry, something went wrong with the activity to take the photo.</string>
+
+    <string name="error_no_parent">Sorry, could not get the parent directory.</string>
+    <string name="error_list_dirs">Sorry, listing directories failed.</string>
+    <string name="error_list_photos">Sorry, listing photo files failed.</string>
+    <string name="error_initial_dir_not_created">Sorry, could not create the initial directory.</string>
+    <string name="error_dir_not_created">Sorry, could not create the directory.</string>
+    <string name="error_shift_rename_to_create_dir_failed">Sorry, could not create the directory because renaming a folder for shifting the directory numbers failed.</string>
+    <string name="error_dir_rename_to_move_dir_failed">Sorry, a folder could not be renamed.</string>
+    <string name="error_dir_not_deleted">Sorry, the directory could not be deleted. Is it empty?</string>
+    <string name="error_shift_rename_after_dir_deletion_failed">Sorry, the directory has been deleted, but renaming a folder for shifting the directory numbers failed.</string>
+
+    <string name="error_photo_rename_to_move_photo_failed">Sorry, a file could not be renamed.</string>
+    <string name="error_photo_not_deleted">Sorry, the picture could not be deleted.</string>
+    <string name="error_shift_rename_after_photo_deletion_failed">Sorry, the picture has been deleted, but renaming a file for shifting the picture numbers failed.</string>
+
+    <!-- Layouts (except dialogs) -->
+    <string name="grant_permission_button">Grant permission</string>
+    <string name="grant_permission_message">File system permission is required to view and take photos from/to the file system.</string>
+
+    <string name="button_take_photo">Take photo</string>
+    <string name="button_change_to_parent_dir">Up</string>
+    <string name="button_new_dir">New dir</string>
+    <string name="button_refresh">Refresh</string>
+
+    <string name="button_capture_photo">Take Photo</string>
+
+    <!-- Dialogs -->
+
+    <!-- Change, delete or create directory dialog -->
+    <string name="change_dir_make_new_dialog_title">Create new directory</string>
+    <string name="change_dir_make_new_dialog_message">Please choose a display name and a position for the new folder.</string>
+    <string name="change_dir_dialog_title">Change or delete directory</string>
+    <string name="change_dir_dialog_message">Please choose a new name and position for the folder or select to delete it.</string>
+    <string name="change_dir_dialog_editText_displayName_hint">Display name</string>
+    <string name="change_dir_dialog_checkBox_delete_dir">Delete directory</string>
+    <string name="change_dir_dialog_button_confirm">OK</string>
+    <string name="change_dir_dialog_button_cancel">Cancel</string>
+
+    <!-- Change photo dialog -->
+    <string name="photo_options_dialog_title">Change or delete photo</string>
+    <string name="photo_options_dialog_message">Please choose a new position for the picture.</string>
+    <string name="photo_options_dialog_checkBox_delete_photo">Delete picture/file</string>
+    <string name="photo_options_dialog_button_confirm">OK</string>
+    <string name="photo_options_dialog_button_cancel">Cancel</string>
+    <string name="photo_options_preview_description">Image to change</string>
+
+    <!-- Confirm delete directory dialog -->
+    <string name="confirm_delete_dialog_title">Delete directory?</string>
+    <string name="confirm_delete_dialog_message_before_dirName">Are you sure you want to permanently delete the folder \"</string>
+    <string name="confirm_delete_dialog_message_after_dirName">\"?</string>
+    <string name="confirm_delete_dialog_button_confirm">Yes</string>
+    <string name="confirm_delete_dialog_button_cancel">No, cancel</string>
+
+    <!-- Confirm delete photo dialog -->
+    <string name="confirm_delete_photo_title">Delete picture?</string>
+    <string name="confirm_delete_photo_message">Are you sure you want to permanently delete this file?</string>
+    <string name="confirm_delete_photo_button_confirm">Yes</string>
+    <string name="confirm_delete_photo_button_cancel">No, cancel</string>
+    <string name="delete_photo_preview_description">Image to delete</string>
+
 </resources>
