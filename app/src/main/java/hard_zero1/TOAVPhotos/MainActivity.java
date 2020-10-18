@@ -2,7 +2,6 @@ package hard_zero1.TOAVPhotos;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +10,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Intent;
+import android.content.UriPermission;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -23,7 +23,7 @@ import android.widget.CompoundButton;
 import androidx.appcompat.widget.SwitchCompat;
 import android.widget.Toast;
 
-import java.io.IOException;
+import java.util.List;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
@@ -57,10 +57,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             getSupportActionBar().hide();
         }
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            startActivityForResult(new Intent(this, GrantPermissionActivity.class), REQUEST_PERMISSION_ACTIVITY);
-        }else{
-            onCreateWithPermission();
+        if(Build.VERSION.SDK_INT >= 21) {
+            List<UriPermission> uriPermissions = getContentResolver().getPersistedUriPermissions();
+            if(uriPermissions.size() > 0) {
+                onCreateWithPermission(uriPermissions.get(0).getUri());
+            }else{
+                startActivityForResult(new Intent(this, GrantPermissionActivity.class), REQUEST_PERMISSION_ACTIVITY);
+            }
+        }else {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                startActivityForResult(new Intent(this, GrantPermissionActivity.class), REQUEST_PERMISSION_ACTIVITY);
+            } else {
+                onCreateWithPermission(null);
+            }
         }
     }
 
@@ -68,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * Initializes instance variables, sets up the views of the activity.
      */
     @SuppressLint("ClickableViewAccessibility")
-    private void onCreateWithPermission() {
+    private void onCreateWithPermission(Uri initialParent) {
         setContentView(R.layout.activity_main);
         res = getResources();
 
@@ -85,7 +94,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         rvPhotos.addItemDecoration(new DividerItemDecoration(this, photoViewLayManager.getOrientation()));
 
         try {
-            fileOrga = FileTreeOrganizer.getSingletonInstance(getApplicationContext());
+            if(Build.VERSION.SDK_INT >= 21) {
+                fileOrga = FileTreeOrganizer.getSingletonInstance(getApplicationContext(), initialParent);
+            }else {
+                fileOrga = FileTreeOrganizer.getSingletonInstance(getApplicationContext());
+            }
             dirViewAdapter = new DirViewAdapter(this);
             photoViewAdapter = new PhotoViewAdapter(this, photoViewLayManager);
         } catch (FileTreeOrganizer.DirectoryNotCreatedException e) {
@@ -378,17 +391,13 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }else{
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePhotoIntent.resolveActivity(getPackageManager()) != null) {
-                FileTreeOrganizer.PreparedSaveFile saveFileResult;
+                Uri saveFileUri;
                 try {
-                    saveFileResult = fileOrga.prepareSaveFile();
-                }catch (IOException ex){
-                    Toast.makeText(this, res.getString(R.string.error_IO_createPhotoFile), Toast.LENGTH_SHORT).show();
+                    saveFileUri = fileOrga.prepareSaveFile();
+                }catch (FileTreeOrganizer.FileNotCreatedException ex){
+                    Toast.makeText(this, res.getString(R.string.error_createPhotoFile), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if(saveFileResult.alreadyExisted()) {
-                    Toast.makeText(this, res.getString(R.string.warning_file_already_existed), Toast.LENGTH_SHORT).show();
-                }
-                Uri saveFileUri = FileProvider.getUriForFile(this,"hard_zero1.TOAVPhotos.fileprovider", saveFileResult.getSaveFile());
                 takePhotoIntent.putExtra(MediaStore.EXTRA_OUTPUT, saveFileUri);
                 takePhotoIntent.setClipData(ClipData.newRawUri("", saveFileUri));
                 takePhotoIntent.setFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
@@ -406,6 +415,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
      * If the activity to take the photo finishes, the file prepared for the photo is either
      * cancelled or confirmed, depending on the success of the activity.
      */
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_TAKE_PHOTO){
@@ -425,7 +435,11 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
                 }
             }
         }else if(requestCode == REQUEST_PERMISSION_ACTIVITY && resultCode == RESULT_OK){
-            onCreateWithPermission();
+            if(Build.VERSION.SDK_INT >= 21) {
+                onCreateWithPermission(data.getData());
+            }else{
+                onCreateWithPermission(null);
+            }
         }else{
             finish();
         }

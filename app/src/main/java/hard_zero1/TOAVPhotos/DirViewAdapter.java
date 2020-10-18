@@ -14,8 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class DirViewAdapter extends RecyclerView.Adapter<DirViewAdapter.DirViewViewHolder> {
 
-    private MainActivity activity;
-    private FileTreeOrganizer fileOrga;
+    private final MainActivity activity;
+    private final FileTreeOrganizer fileOrga;
     private DirViewElement[] elements;
 
     /**
@@ -34,8 +34,8 @@ public class DirViewAdapter extends RecyclerView.Adapter<DirViewAdapter.DirViewV
     }
 
     public class DirViewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        private TextView tvFileName;
-        private TextView tvDirNumber;
+        private final TextView tvFileName;
+        private final TextView tvDirNumber;
 
         public DirViewViewHolder(ConstraintLayout lay) {
             super(lay);

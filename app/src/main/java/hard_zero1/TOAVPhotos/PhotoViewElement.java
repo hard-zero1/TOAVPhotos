@@ -2,7 +2,8 @@ package hard_zero1.TOAVPhotos;
 
 import android.content.res.Resources;
 
-import java.io.File;
+import androidx.documentfile.provider.DocumentFile;
+
 import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
@@ -13,11 +14,11 @@ import java.util.Date;
  * Note: this class has a natural ordering (compareTo()) that is inconsistent with equals().
  */
 public class PhotoViewElement implements Serializable, Comparable<PhotoViewElement> {
-    private String infoText;
+    private final String infoText;
 
-    private Date time;
-    private File file;
-    private int number;
+    private final Date time;
+    private final DocumentFile file;
+    private final int number;
 
     /**
      * The constructor for PhotoViewElement.
@@ -26,7 +27,7 @@ public class PhotoViewElement implements Serializable, Comparable<PhotoViewEleme
      * @param time The time of the photo to hold (when it was taken)
      * @param file A File instance for the photo's file.
      */
-    public PhotoViewElement(Resources res, int number, Date time, File file) {
+    public PhotoViewElement(Resources res, int number, Date time, DocumentFile file) {
         this.number = number;
         String timeText;
         if(time != null) {
@@ -46,7 +47,7 @@ public class PhotoViewElement implements Serializable, Comparable<PhotoViewEleme
         return time;
     }
 
-    public File getFile() {
+    public DocumentFile getFile() {
         return file;
     }
 

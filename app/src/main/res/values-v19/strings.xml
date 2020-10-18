@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="grant_permission_button">Pick directory</string>
+    <string name="grant_permission_message">Please choose a directory where TOAV Photos should place its directory tree.
+A new folder \"TOAVPhotos\" will be created in the directory you select and everything will be put in there.\n
+- The directory you choose is the highest that will be accessible through this app.\n
+- For example, you can choose the root or the \"DCIM\" directory.\n
+- This can\'t be changed except by reinstalling the app.</string>
+</resources>

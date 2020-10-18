@@ -1,12 +1,13 @@
 <resources>
     <string name="app_name">TOAV Photos</string>
-    <string name="initial_directory">/storage/emulated/0/TOAVPhotos</string>
+    <string name="initial_subdirectory">TOAVPhotos</string>
 
     <!-- Changing some of these requires changes in the source code -->
     <string name="directory_number_suffix_format">-toavp%03d</string>
     <string name="directory_number_suffix_regex">.*-toavp[0-9]{3}$</string>
     <string name="temp_dirname_being_moved_prefix">__beingMoved-</string>
     <string name="photo_file_extension_accept">.jpg</string>
+    <string name="photo_file_extension_accept2">.jpeg</string>
     <string name="photo_file_extension_toavp">-toavp.jpg</string>
     <string name="photo_file_number_prefix_format">%03d</string>
     <string name="photo_file_number_prefix_separator">-</string>
@@ -23,9 +24,8 @@
     <!-- Error messages -->
     <string name="error_default">Sorry, an unknown Runtime error occurred.</string>
 
-    <string name="error_IO_createPhotoFile">Sorry, IO-error occurred when creating the file for the photo.</string>
-    <!--string name="error_access_denied">Sorry, write access to file denied.</string-->
-    <string name="warning_file_already_existed">Weird, the file for the photo already existed.</string>
+    <string name="error_createPhotoFile">Sorry, failed to create the file for the photo.</string>
+    <string name="error_save_file_not_found">Sorry, the prepared file to save the photo could not be found.</string>
 
     <string name="exception_getting_cam_provider">Sorry, failed to get the camera provider.</string>
     <string name="error_using_camera">Sorry, failed to use the camera.</string>

@@ -82,7 +82,7 @@ public class DirOptionsDialogFragment extends DialogFragment implements Compound
         if(action == Action.MAKE_NEW) {
             dialogView.removeView(dialogView.findViewById(R.id.cbDeleteDir));
         }else{
-            CheckBox cbDelete = (CheckBox) dialogView.findViewById((R.id.cbDeleteDir));
+            CheckBox cbDelete = dialogView.findViewById((R.id.cbDeleteDir));
             cbDelete.setOnCheckedChangeListener(this);
             cbDelete.setChecked(deleteChecked);
         }

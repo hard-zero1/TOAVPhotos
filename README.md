@@ -12,8 +12,9 @@ You can also write me to hardzero01+github@gmail.com.**
 
 ## Install
 
-If you don't have Android Studio, you can download the [TOAVPhotos_v1.0.apk](https://github.com/hard-zero1/TOAVPhotos/releases/download/v1.0/TOAVPhotos_v1.0.apk) file from the initial release to the Android device. Open the downloaded .apk file to install the app. You will be required to allow the installation from unknown sources in the settings. (You might need to do that before opening the .apk file. The option should be called "Unknown sources" and be located in some "Security" section of the system settings.)  
-When first using the app you will be asked to grant the permissions to access the file system (for maintaining the file tree) and the camera (to take photos). The app creates a directory "TOAVPhotos" in the file system for the file tree with your photos.
+If you don't have Android Studio, you can download the [TOAVPhotos_v1.0.1.apk](https://github.com/hard-zero1/TOAVPhotos/releases/download/v1.0.1/TOAVPhotos_v1.0.1.apk) release file to the Android device. Open the downloaded .apk file to install the app. You will be required to allow the installation from unknown sources in the settings. (You might need to do that before opening the .apk file. The option should be called "Unknown sources" and be located in some "Security" section of the system settings.)  
+*On Android 5.0 (Lollipop) or higher*, when first starting the app you will be asked to select a directory. A folder "TOAVPhotos" will be created in the selected directory where you can put the file tree with your photos. You won't be able to navigate through the app to places higher in the file system tree than the directory that you selected. It can't be changed in the future without uninstalling and reinstalling the app. The first time you open the camera view you will be asked for the permission the access the camera.  
+*On older Android versions* (the lowest supported version is Android 4.1, Jelly Bean) you will be asked for file system access permission when first starting the app and the "TOAVPhotos" directory will be created on the highest accessible file system tree level.  
 
 If you have Android Studio, you can import the project as decribed below. Then, you can use Android Studio to build and install the app.
 
@@ -28,7 +29,7 @@ In the full screen view, you can swipe through the photos and past the boundarie
 
 Tap and hold anywhere on a photo or directory in the main view to get the corresponding options dialog. There, you can choose to delete it, move it to a new position (select the corresponding number) or rename it (for directories).
 
-The "Take Photo" button brings you to the camera. If you are using Android 5.0 (Lollipop) or higher, you will get to the app's camera view. If you use an older version of Android (minimum supported version is Android 4.1, Jelly Bean), you will be redirected to an external camera app.
+The "Take Photo" button brings you to the camera. If you are using Android 5.0 (Lollipop) or higher, you will get to the app's camera view. If you use an older version of Android, you will be redirected to an external camera app.
 Photos you make will be appended to the photos in the current directory (even if you were redirected to an external camera app)
 
 In the app's camera view, there are two sliders: One is for zoom, the other one for brightness. You can also pinch to zoom. Tap anywhere to select that point as target for the autofocus. Use your device's back button to get back to the main view.

@@ -3,10 +3,13 @@ package hard_zero1.TOAVPhotos;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.Uri;
+import android.os.Environment;
+
+import androidx.annotation.RequiresApi;
+import androidx.documentfile.provider.DocumentFile;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -22,14 +25,14 @@ import static java.lang.Math.max;
  */
 public class FileTreeOrganizer {
     private static FileTreeOrganizer instance;
-    private Resources res;
+    private final Resources res;
 
-    private SimpleDateFormat timeFormat;
+    private final SimpleDateFormat timeFormat;
 
-    private File currentDir;
+    private DocumentFile currentDir;
     private DirViewElement[] dirViewElements;
     private PhotoViewElement[] photoViewElements;
-    private File currentSaveFile;
+    private DocumentFile currentSaveFile;
     private int currentPhotoCounter;
     private int currentDirCounter;
 
@@ -44,6 +47,11 @@ public class FileTreeOrganizer {
     public static class DirectoryNotCreatedException extends Exception {}
 
     /**
+     * Thrown when creating the file prepared for saving a photo failed.
+     */
+    public static class FileNotCreatedException extends Exception {}
+
+    /**
      * Thrown when deleting the file prepared for saving a photo failed.
      */
     public static class PhotoFileNotDeletedException extends Exception {}
@@ -54,27 +62,38 @@ public class FileTreeOrganizer {
     public static class RenameFailedException extends Exception {}
 
     @SuppressLint("SimpleDateFormat")
-    private FileTreeOrganizer(Context appContext, String currentDirectory) throws DirectoryNotCreatedException, ListFilesError {
+    private FileTreeOrganizer(Context appContext, DocumentFile parent) throws DirectoryNotCreatedException, ListFilesError {
         this.res = appContext.getResources();
         timeFormat = new SimpleDateFormat(res.getString(R.string.date_format_in_filename));
-        currentDir = new File(currentDirectory);
-        initDir();
-    }
-
-    public static FileTreeOrganizer getSingletonInstance(Context appContext) throws DirectoryNotCreatedException, ListFilesError {
-        if(instance == null) {
-            instance = new FileTreeOrganizer(appContext,appContext.getResources().getString(R.string.initial_directory));
-        }
-        return instance;
-    }
-
-    private void initDir() throws DirectoryNotCreatedException, ListFilesError {
-        if (!currentDir.exists()) {
-            if (!currentDir.mkdirs()) {
+        currentDir = parent.findFile(appContext.getResources().getString(R.string.initial_subdirectory));
+        if (currentDir == null) {
+            currentDir = parent.createDirectory(appContext.getResources().getString(R.string.initial_subdirectory));
+            if(currentDir == null) {
                 throw new DirectoryNotCreatedException();
             }
         }
         refresh();
+    }
+
+    /**
+     * For use with api level below 21
+     */
+    public static FileTreeOrganizer getSingletonInstance(Context appContext) throws DirectoryNotCreatedException, ListFilesError {
+        if(instance == null) {
+            File extRoot = Environment.getExternalStorageDirectory();
+            instance = new FileTreeOrganizer(appContext, DocumentFile.fromFile(extRoot));
+        }
+        return instance;
+    }
+    /**
+     * For use with api level 21 or higher
+     */
+    @RequiresApi(api = 21)
+    public static FileTreeOrganizer getSingletonInstance(Context appContext, Uri initialParent) throws DirectoryNotCreatedException, ListFilesError {
+        if(instance == null) {
+            instance = new FileTreeOrganizer(appContext, DocumentFile.fromTreeUri(appContext, initialParent));
+        }
+        return instance;
     }
 
     /**
@@ -90,7 +109,7 @@ public class FileTreeOrganizer {
      * Move to the parent directory as new current "working" directory.
      */
     public void cdUP() throws ListFilesError {
-        File parent = currentDir.getParentFile();
+        DocumentFile parent = currentDir.getParentFile();
         if (parent != null && parent.canRead()) {
             currentDir = parent;
         }
@@ -116,18 +135,15 @@ public class FileTreeOrganizer {
      * @return The generated array of DirViewElements
      * @throws ListFilesError Will be thrown if the parent.listFiles() method returns null
      */
-    public DirViewElement[] generateDirElements(File parent) throws ListFilesError {
+    public DirViewElement[] generateDirElements(DocumentFile parent) throws ListFilesError {
         ArrayList<DirViewElement> dirElements = new ArrayList<>();
-        File[] dirList = parent.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isDirectory();
-            }
-        });
+        DocumentFile[] dirList = parent.listFiles();
         if (dirList == null) { throw new ListFilesError(); }
-        for (File file : dirList) {
-            String filename = file.getName();
-            dirElements.add(new DirViewElement(getDirCounter(filename), getDirDisplayName(filename), file));
+        for (DocumentFile file : dirList) {
+            if(file.isDirectory()) {
+                String filename = file.getName();
+                dirElements.add(new DirViewElement(getDirCounter(filename), getDirDisplayName(filename), file));
+            }
         }
         DirViewElement[] dirElementsArray = dirElements.toArray(new DirViewElement[0]);
         Arrays.sort(dirElementsArray);
@@ -141,18 +157,15 @@ public class FileTreeOrganizer {
      * @return The generated array of PhotoViewElements
      * @throws ListFilesError Will be thrown if the parent.listFiles() method returns null
      */
-    public PhotoViewElement[] generatePhotoViewElements(File parent) throws ListFilesError {
+    public PhotoViewElement[] generatePhotoViewElements(DocumentFile parent) throws ListFilesError {
         ArrayList<PhotoViewElement> photoViewElements = new ArrayList<>();
-        File[] photoList = parent.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.isFile() && pathname.getName().endsWith(res.getString(R.string.photo_file_extension_accept));
-            }
-        });
+        DocumentFile[] photoList = parent.listFiles();
         if (photoList == null) { throw new ListFilesError(); }
-        for (File file : photoList) {
-            String filename = file.getName();
-            photoViewElements.add(new PhotoViewElement(res, getFileCounter(filename), getFileTime(filename), file));
+        for (DocumentFile file : photoList) {
+            if(file.isFile() && file.getName().endsWith(res.getString(R.string.photo_file_extension_accept)) || file.getName().endsWith(res.getString(R.string.photo_file_extension_accept2))) {
+                String filename = file.getName();
+                photoViewElements.add(new PhotoViewElement(res, getFileCounter(filename), getFileTime(filename), file));
+            }
         }
         PhotoViewElement[] photoViewElementsArray = photoViewElements.toArray(new PhotoViewElement[0]);
         Arrays.sort(photoViewElementsArray);
@@ -184,36 +197,18 @@ public class FileTreeOrganizer {
     }
 
     /**
-     * Saves the prepared files File instance and a boolean if the file already existed when it
-     * was tried to create it. An instance is returned by prepareSaveFile()
-     */
-    public static class PreparedSaveFile {
-        private File saveFile;
-        private boolean alreadyExisted;
-
-        private PreparedSaveFile(File saveFile, boolean alreadyExisted) {
-            this.saveFile = saveFile;
-            this.alreadyExisted = alreadyExisted;
-        }
-
-        public File getSaveFile() {
-            return saveFile;
-        }
-        public boolean alreadyExisted() {
-            return alreadyExisted;
-        }
-    }
-
-    /**
      * Creates (if not already there) a new file with the next higher position number and the current date and time.
-     * @return A PreparedSaveFile instance that saves the prepared files File instance and a boolean if the file already existed when it
+     * @return The Uri of the created file
      */
-    public PreparedSaveFile prepareSaveFile() throws IOException {
+    public Uri prepareSaveFile() throws FileNotCreatedException{
         String dateStr = timeFormat.format(new Date());
         @SuppressLint("DefaultLocale")
         String counterStr = String.format(res.getString(R.string.photo_file_number_prefix_format), currentPhotoCounter + 1);
-        currentSaveFile = new File(currentDir, counterStr + res.getString(R.string.photo_file_number_prefix_separator) + dateStr + res.getString(R.string.photo_file_extension_toavp));
-        return new PreparedSaveFile(currentSaveFile, !currentSaveFile.createNewFile());
+        currentSaveFile = currentDir.createFile("image/jpeg", counterStr + res.getString(R.string.photo_file_number_prefix_separator) + dateStr + res.getString(R.string.photo_file_extension_toavp));
+        if(currentSaveFile == null) {
+            throw new FileNotCreatedException();
+        }
+        return currentSaveFile.getUri();
     }
 
     /**
@@ -250,7 +245,7 @@ public class FileTreeOrganizer {
         }
         shiftDirFileNumbers(index, true);
         @SuppressLint("DefaultLocale")
-        boolean created =  new File(currentDir, displayName + String.format(res.getString(R.string.directory_number_suffix_format), number)).mkdir();
+        boolean created = null != currentDir.createDirectory(displayName + String.format(res.getString(R.string.directory_number_suffix_format), number));
         refresh();
         return created;
     }
@@ -425,11 +420,11 @@ public class FileTreeOrganizer {
     private void moveSingleDir(int oldIndex, int newNumber, String newDisplayName) throws RenameFailedException{
         @SuppressLint("DefaultLocale")
         String filename = newDisplayName + String.format(res.getString(R.string.directory_number_suffix_format), newNumber);
-        File newFile = new File(currentDir, filename);
-        if(!dirViewElements[oldIndex].getDirFile().renameTo(newFile)) {
+        DocumentFile file = dirViewElements[oldIndex].getDirFile();
+        if(!file.renameTo(filename)) {
             throw new RenameFailedException();
         }
-        dirViewElements[oldIndex] = new DirViewElement(newNumber, getDirDisplayName(filename), newFile);
+        dirViewElements[oldIndex] = new DirViewElement(newNumber, getDirDisplayName(filename), file);
     }
 
     /**
@@ -475,11 +470,11 @@ public class FileTreeOrganizer {
         }
         @SuppressLint("DefaultLocale")
         String filename = String.format(res.getString(R.string.photo_file_number_prefix_format), newNumber) + res.getString(R.string.photo_file_number_prefix_separator) + timeString + res.getString(R.string.photo_file_extension_toavp);
-        File newFile = new File(currentDir, filename);
-        if(!photoViewElements[oldIndex].getFile().renameTo(newFile)) {
+        DocumentFile file = photoViewElements[oldIndex].getFile();
+        if(!file.renameTo(filename)) {
             throw new RenameFailedException();
         }
-        photoViewElements[oldIndex] = new PhotoViewElement(res, newNumber, time, newFile);
+        photoViewElements[oldIndex] = new PhotoViewElement(res, newNumber, time, file);
     }
 
     /**

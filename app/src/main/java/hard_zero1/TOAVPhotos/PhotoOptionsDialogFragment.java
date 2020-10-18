@@ -67,12 +67,12 @@ public class PhotoOptionsDialogFragment extends DialogFragment implements Compou
             deleteChecked = savedInstanceState.getBoolean("deleteChecked");
         }
         dialogView = (ViewGroup) requireActivity().getLayoutInflater().inflate(R.layout.photo_options_dialog, null);
-        CheckBox cbDelete = ((CheckBox) dialogView.findViewById((R.id.cbDeletePhoto)));
+        CheckBox cbDelete = dialogView.findViewById((R.id.cbDeletePhoto));
         cbDelete.setOnCheckedChangeListener(this);
         cbDelete.setChecked(deleteChecked);
 
         ((TextView) dialogView.findViewById(R.id.tvPhotoIdentText)).setText(element.getInfoText());
-        Glide.with(requireActivity()).load(element.getFile()).into((ImageView) dialogView.findViewById(R.id.ivPreview));
+        Glide.with(requireActivity()).load(element.getFile().getUri()).into((ImageView) dialogView.findViewById(R.id.ivPreview));
         NumberPicker picker = dialogView.findViewById(R.id.photoNumberPicker);
         picker.setMinValue(min);
         picker.setMaxValue(max);

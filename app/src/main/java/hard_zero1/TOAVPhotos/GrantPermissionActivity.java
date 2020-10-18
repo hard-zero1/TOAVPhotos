@@ -1,11 +1,15 @@
 package hard_zero1.TOAVPhotos;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 
@@ -16,11 +20,14 @@ import android.view.View;
 public class GrantPermissionActivity extends AppCompatActivity {
 
     private static final int REQUEST_FILE_PERMISSION = 1;
+    private static final int REQUEST_TREE_PERMISSION = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILE_PERMISSION);
+        if(Build.VERSION.SDK_INT < 21) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILE_PERMISSION);
+        }
         setContentView(R.layout.activity_grant_permission);
     }
 
@@ -35,6 +42,27 @@ public class GrantPermissionActivity extends AppCompatActivity {
     }
 
     public void onBtnRequestPermissionClick(View v) {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILE_PERMISSION);
+        if (Build.VERSION.SDK_INT >= 21) {
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivityForResult(intent, REQUEST_TREE_PERMISSION);
+        }else{
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_FILE_PERMISSION);
+        }
+    }
+
+    @RequiresApi(api = 19) // Used only with at least 21
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TREE_PERMISSION && resultCode == RESULT_OK && data != null) {
+            Uri dirUri = data.getData();
+            Intent resultIntent = new Intent();
+            resultIntent.setData(dirUri);
+            setResult(RESULT_OK, resultIntent);
+            getContentResolver().takePersistableUriPermission(dirUri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            finish();
+        }
+
     }
 }

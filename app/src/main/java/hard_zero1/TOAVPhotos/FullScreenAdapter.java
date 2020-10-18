@@ -17,10 +17,10 @@ public class FullScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int NORMAL_PHOTO = 0;
     private static final int TRANSITION_VIEW = 1;
 
-    private Activity activity;
-    private FullScreenPhotoActivity.FullScreenFileManager fileManager;
+    private final Activity activity;
+    private final FullScreenPhotoActivity.FullScreenFileManager fileManager;
     private PhotoViewElement[] items;
-    private int transitionLayoutID;
+    private final int transitionLayoutID;
 
     public FullScreenAdapter(Activity activity, FullScreenPhotoActivity.FullScreenFileManager fileManager, boolean verticalOrientation) throws FileTreeOrganizer.ListFilesError {
         this.activity = activity;
@@ -31,7 +31,7 @@ public class FullScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public class FullScreenPhotoHolder extends RecyclerView.ViewHolder {
-        private PhotoView photoView;
+        private final PhotoView photoView;
 
         public FullScreenPhotoHolder(@NonNull View itemView) {
             super(itemView);
@@ -40,7 +40,7 @@ public class FullScreenAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
 
         public void setElement(PhotoViewElement item) {
-            Glide.with(activity).load(item.getFile()).into(photoView);
+            Glide.with(activity).load(item.getFile().getUri()).into(photoView);
         }
     }
 

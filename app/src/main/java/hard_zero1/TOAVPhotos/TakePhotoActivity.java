@@ -28,6 +28,7 @@ import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.hardware.display.DisplayManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.transition.Fade;
@@ -46,7 +47,9 @@ import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.io.IOException;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import static android.view.Surface.ROTATION_0;
 
@@ -208,20 +211,23 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnTouch
         if( !cameraRunning) { return; }
 
         v.setBackgroundColor(res.getColor(R.color.colorShutterButtonActive));
-
-        FileTreeOrganizer.PreparedSaveFile saveFileResult;
-        try {
-            saveFileResult = fileOrga.prepareSaveFile();
-        }catch (IOException ex){
-            Toast.makeText(this, res.getString(R.string.error_IO_createPhotoFile), Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(saveFileResult.alreadyExisted()) {
-            Toast.makeText(this, res.getString(R.string.warning_file_already_existed), Toast.LENGTH_SHORT).show();
-        }
+        v.setEnabled(false);
 
         // Create output options object which contains file + metadata
-        ImageCapture.OutputFileOptions outputOptions = (new ImageCapture.OutputFileOptions.Builder(saveFileResult.getSaveFile())).build();
+        FileDescriptor saveFileDescriptor;
+        try {
+            Uri saveFileUri = fileOrga.prepareSaveFile();
+            saveFileDescriptor = getContentResolver().openFileDescriptor(saveFileUri, "w").getFileDescriptor();
+        }catch (FileTreeOrganizer.FileNotCreatedException ex){
+            Toast.makeText(this, res.getString(R.string.error_createPhotoFile), Toast.LENGTH_SHORT).show();
+            return;
+        } catch (FileNotFoundException e) {
+            Toast.makeText(this, res.getString(R.string.error_save_file_not_found), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        FileOutputStream saveFileStream = new FileOutputStream(saveFileDescriptor);
+        ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(saveFileStream).build();
 
         // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture( outputOptions, ContextCompat.getMainExecutor(this), new ImageCapture.OnImageSavedCallback() {
@@ -235,6 +241,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnTouch
                 }
                 Toast.makeText(TakePhotoActivity.this, errMessage, Toast.LENGTH_SHORT).show();
                 v.setBackgroundColor(res.getColor(R.color.colorPrimary));
+                v.setEnabled(true);
             }
             @Override
             public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {

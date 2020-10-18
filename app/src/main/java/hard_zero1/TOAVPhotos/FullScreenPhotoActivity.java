@@ -1,14 +1,13 @@
 package hard_zero1.TOAVPhotos;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.documentfile.provider.DocumentFile;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
-
-import java.io.File;
 
 /**
  * Activity to show the photos in ihe current directory in fullscreen mode. You can slide through
@@ -122,7 +121,7 @@ public class FullScreenPhotoActivity extends AppCompatActivity {
      * has to be reloaded.
      */
     public class FullScreenFileManager {
-        private FileTreeOrganizer fileOrga;
+        private final FileTreeOrganizer fileOrga;
         // See getters for documentation
         private int centerTransitionIndex;
         private DirViewElement previousDir;
@@ -180,11 +179,11 @@ public class FullScreenPhotoActivity extends AppCompatActivity {
          */
         private void updateDirElements() throws NoParentFileException, FileTreeOrganizer.ListFilesError {
             DirViewElement[] elements;
-            File parent = currentDir1.getDirFile().getParentFile();
+            DocumentFile parent = currentDir1.getDirFile().getParentFile();
             if (parent == null) { throw new NoParentFileException(); }
             elements = fileOrga.generateDirElements(parent);
             for(int i = 0; i < elements.length; i++) {
-                if(elements[i].getDirFile().equals(currentDir1.getDirFile())){
+                if(elements[i].dirEquals(currentDir1)){
                     if(i > 0) {
                         previousDir = elements[i-1];
                     }else{

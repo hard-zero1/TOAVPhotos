@@ -49,7 +49,7 @@ public class ConfirmDeletePhotoDialogFragment extends DialogFragment {
             element = (PhotoViewElement) savedInstanceState.getSerializable("element");
         }
         dialogView = (ViewGroup) requireActivity().getLayoutInflater().inflate(R.layout.confirm_delete_picture_dialog, null);
-        Glide.with(requireActivity()).load(element.getFile()).into((ImageView) dialogView.findViewById(R.id.ivDeletePreview));
+        Glide.with(requireActivity()).load(element.getFile().getUri()).into((ImageView) dialogView.findViewById(R.id.ivDeletePreview));
         ((TextView) dialogView.findViewById(R.id.tvDeletePhotoIdent)).setText(element.getInfoText());
     }
 

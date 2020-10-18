@@ -1,6 +1,6 @@
 package hard_zero1.TOAVPhotos;
 
-import java.io.File;
+import androidx.documentfile.provider.DocumentFile;
 
 /**
  * Holds the data necessary to show a directory with its display name at the right position and to
@@ -8,9 +8,9 @@ import java.io.File;
  * Note: this class has a natural ordering (compareTo()) that is inconsistent with equals().
  */
 public class DirViewElement implements Comparable<DirViewElement> {
-    private String displayName;
-    private int number;
-    private File dirFile;
+    private final String displayName;
+    private final int number;
+    private final DocumentFile dirFile;
 
     /**
      * The constructor for DirViewElement.
@@ -18,7 +18,7 @@ public class DirViewElement implements Comparable<DirViewElement> {
      * @param displayName The name to display for the directory
      * @param dirFile A File instance for the directory.
      */
-    public DirViewElement(int number, String displayName, File dirFile) {
+    public DirViewElement(int number, String displayName, DocumentFile dirFile) {
         this.displayName = displayName;
         this.number = number;
         this.dirFile = dirFile;
@@ -28,12 +28,16 @@ public class DirViewElement implements Comparable<DirViewElement> {
         return displayName;
     }
 
-    public File getDirFile() {
+    public DocumentFile getDirFile() {
         return dirFile;
     }
 
     public int getNumber() {
         return number;
+    }
+
+    public boolean dirEquals(DirViewElement o) {
+        return dirFile.getUri().equals(o.dirFile.getUri());
     }
 
     /**

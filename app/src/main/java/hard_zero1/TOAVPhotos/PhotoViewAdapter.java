@@ -21,9 +21,9 @@ import com.github.chrisbanes.photoview.PhotoView;
  * The Adapter for the RecyclerView that shows the photos in the main activity.
  */
 public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.PhotoViewHolder> implements View.OnTouchListener {
-    private MainActivity activity;
-    private PhotoViewLayoutManager layManager;
-    private FileTreeOrganizer fileOrga;
+    private final MainActivity activity;
+    private final PhotoViewLayoutManager layManager;
+    private final FileTreeOrganizer fileOrga;
     private PhotoViewElement[] items;
 
     /**
@@ -80,7 +80,7 @@ public class PhotoViewAdapter extends RecyclerView.Adapter<PhotoViewAdapter.Phot
 
         public void setPhoto(PhotoViewElement item) {
             tvPhotoInfo.setText(item.getInfoText());
-            Glide.with(activity).load(item.getFile()).into(pvPhotoView);
+            Glide.with(activity).load(item.getFile().getUri()).into(pvPhotoView);
         }
 
         /**
