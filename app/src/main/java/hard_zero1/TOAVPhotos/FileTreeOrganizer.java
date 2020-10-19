@@ -162,8 +162,8 @@ public class FileTreeOrganizer {
         DocumentFile[] photoList = parent.listFiles();
         if (photoList == null) { throw new ListFilesError(); }
         for (DocumentFile file : photoList) {
-            if(file.isFile() && file.getName().endsWith(res.getString(R.string.photo_file_extension_accept)) || file.getName().endsWith(res.getString(R.string.photo_file_extension_accept2))) {
-                String filename = file.getName();
+            String filename = file.getName();
+            if(file.isFile() && filename != null && (filename.endsWith(res.getString(R.string.photo_file_extension_accept)) || filename.endsWith(res.getString(R.string.photo_file_extension_accept2)))) {
                 photoViewElements.add(new PhotoViewElement(res, getFileCounter(filename), getFileTime(filename), file));
             }
         }

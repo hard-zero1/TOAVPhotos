@@ -30,6 +30,7 @@
     <string name="exception_getting_cam_provider">Sorry, failed to get the camera provider.</string>
     <string name="error_using_camera">Sorry, failed to use the camera.</string>
     <string name="error_taking_photo">Sorry, failed to take or save the photo.</string>
+    <string name="error_output_stream">Sorry, failed to open the file to save the photo.</string>
     <string name="error_taking_photo_and_deleting">Sorry, failed to take or save the photo. Additionally, the prepared file could not be deleted.</string>
     <string name="error_no_camera_app">Sorry, it appears there is no camera app installed for taking pictures. On Android 5.0 (Lollipop / API level 21) and higher, this app could do it.</string>
     <string name="error_photo_activity">Sorry, something went wrong with the activity to take the photo.</string>

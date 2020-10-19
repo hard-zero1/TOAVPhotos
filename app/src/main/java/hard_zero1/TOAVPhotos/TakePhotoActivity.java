@@ -47,9 +47,8 @@ import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
-import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 import static android.view.Surface.ROTATION_0;
 
@@ -214,10 +213,10 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnTouch
         v.setEnabled(false);
 
         // Create output options object which contains file + metadata
-        FileDescriptor saveFileDescriptor;
+        OutputStream saveOutputStream;
         try {
             Uri saveFileUri = fileOrga.prepareSaveFile();
-            saveFileDescriptor = getContentResolver().openFileDescriptor(saveFileUri, "w").getFileDescriptor();
+            saveOutputStream = getContentResolver().openOutputStream(saveFileUri);
         }catch (FileTreeOrganizer.FileNotCreatedException ex){
             Toast.makeText(this, res.getString(R.string.error_createPhotoFile), Toast.LENGTH_SHORT).show();
             return;
@@ -225,9 +224,11 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnTouch
             Toast.makeText(this, res.getString(R.string.error_save_file_not_found), Toast.LENGTH_SHORT).show();
             return;
         }
-
-        FileOutputStream saveFileStream = new FileOutputStream(saveFileDescriptor);
-        ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(saveFileStream).build();
+        if(saveOutputStream == null) {
+            Toast.makeText(this, res.getString(R.string.error_output_stream), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ImageCapture.OutputFileOptions outputOptions = new ImageCapture.OutputFileOptions.Builder(saveOutputStream).build();
 
         // Set up image capture listener, which is triggered after photo has been taken
         imageCapture.takePicture( outputOptions, ContextCompat.getMainExecutor(this), new ImageCapture.OnImageSavedCallback() {
@@ -251,6 +252,7 @@ public class TakePhotoActivity extends AppCompatActivity implements View.OnTouch
                     Toast.makeText(TakePhotoActivity.this, res.getString(R.string.error_list_dirs), Toast.LENGTH_SHORT).show();
                 }
                 v.setBackgroundColor(res.getColor(R.color.colorPrimary));
+                v.setEnabled(true);
             }
         });
     }
