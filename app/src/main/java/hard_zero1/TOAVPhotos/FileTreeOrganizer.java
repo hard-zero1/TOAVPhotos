@@ -316,7 +316,6 @@ public class FileTreeOrganizer {
                 break;
             }
         }
-        moveSinglePhoto(oldPos, photoViewElements[oldPos].getNumber());
         boolean shiftAtNewPos = shiftPhotoFileNumbers(oldPos, false) && (newPos > oldPos);
         shiftPhotoFileNumbers((shiftAtNewPos ? newPos + 1 : newPos), true);
         moveSinglePhoto(oldPos, newNumber);
